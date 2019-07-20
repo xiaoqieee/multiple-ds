@@ -7,6 +7,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -38,21 +39,28 @@ public class DataSourceSwitchAspect {
     @Before("serviceAspect()")
     public void db1(JoinPoint point) {
         String className = point.getSignature().getDeclaringTypeName();
-        System.out.println(className);
+//        System.out.println(className);
         if (className.startsWith("com.hawcore.framework.multiplyds.service.db.impl")) {
-            logger.info("切换到db1 数据源...");
-            DbContextHolder.setDbType(DBTypeEnum.db1);
+//            logger.info("切换到db1 数据源...");
+            DbContextHolder.setDbType("db");
         } else if (className.startsWith("com.hawcore.framework.multiplyds.service.db1.impl")) {
-            logger.info("切换到db2 数据源...");
-            DbContextHolder.setDbType(DBTypeEnum.db2);
+//            logger.info("切换到db2 数据源...");
+            DbContextHolder.setDbType("db1");
         } else if (className.startsWith("com.hawcore.framework.multiplyds.service.db2.impl")) {
-            logger.info("切换到db3 数据源...");
-            DbContextHolder.setDbType(DBTypeEnum.db3);
+//            logger.info("切换到db3 数据源...");
+            DbContextHolder.setDbType("db2");
         } else {
-            throw new RuntimeException("包名不对");
+            throw new RuntimeException("包名不对。" + className);
         }
 
     }
+
+    @After("serviceAspect()")
+    public void reset() {
+//        logger.info("回退数据源...");
+        DbContextHolder.reback();
+    }
+
 //
 //    @Before("db2Aspect()")
 //    public void db2() {
@@ -66,9 +74,5 @@ public class DataSourceSwitchAspect {
 //        DbContextHolder.setDbType(DBTypeEnum.db3);
 //    }
 
-    //    @After("db1Aspect() || db2Aspect() || db3Aspect()")
-    public void reset() {
-        logger.info("重置数据源...");
-        DbContextHolder.clearDbType();
-    }
+
 }

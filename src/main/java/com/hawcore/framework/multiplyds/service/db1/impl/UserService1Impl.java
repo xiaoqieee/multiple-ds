@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.hawcore.framework.multiplyds.entity.db1.User;
 import com.hawcore.framework.multiplyds.mapper.db1.UserMapper1;
 import com.hawcore.framework.multiplyds.service.db1.IUserService1;
+import com.hawcore.framework.multiplyds.service.db2.IUserService2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -19,6 +21,9 @@ import java.io.Serializable;
 @Service
 public class UserService1Impl extends ServiceImpl<UserMapper1, User> implements IUserService1 {
 
+    @Autowired
+    IUserService2 userService2;
+
     @Override
     public boolean insert(User entity) {
         return super.insert(entity);
@@ -31,6 +36,7 @@ public class UserService1Impl extends ServiceImpl<UserMapper1, User> implements 
 
     @Override
     public User selectById(Serializable id) {
+        System.out.println(userService2.selectById(id));
         return super.selectById(id);
     }
 }

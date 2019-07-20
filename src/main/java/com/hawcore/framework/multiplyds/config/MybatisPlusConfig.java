@@ -9,14 +9,18 @@ import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -25,6 +29,9 @@ import java.util.Properties;
 @Configuration
 @MapperScan("${scan.package}")
 public class MybatisPlusConfig {
+
+    @Autowired
+    private Environment ev;
 
     @Bean
     public PaginationInterceptor paginationInterceptor() {
@@ -39,17 +46,17 @@ public class MybatisPlusConfig {
 //        return DruidDataSourceBuilder.create().build();
 //    }
 
-    @Bean(name = "db2")
-    @ConfigurationProperties(prefix = "spring.datasource.druid.db2")
-    public DataSource db2() {
-        return DruidDataSourceBuilder.create().build();
-    }
-
-    @Bean(name = "db3")
-    @ConfigurationProperties(prefix = "spring.datasource.druid.db3")
-    public DataSource db3() {
-        return DruidDataSourceBuilder.create().build();
-    }
+//    @Bean(name = "db2")
+//    @ConfigurationProperties(prefix = "spring.datasource.druid.db2")
+//    public DataSource db2() {
+//        return DruidDataSourceBuilder.create().build();
+//    }
+//
+//    @Bean(name = "db3")
+//    @ConfigurationProperties(prefix = "spring.datasource.druid.db3")
+//    public DataSource db3() {
+//        return DruidDataSourceBuilder.create().build();
+//    }
 
     /**
      * 动态数据源配置
@@ -58,28 +65,49 @@ public class MybatisPlusConfig {
      */
     @Bean
     @Primary
-    public DataSource multipleDataSource(@Qualifier("db2") DataSource db2,
-                                         @Qualifier("db3") DataSource db3) throws Exception{
+    @ConditionalOnProperty("multiple.datasource.service-list")
+    public DataSource multipleDataSource() throws Exception {
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
-        Map<Object, Object> targetDataSources = new HashMap<>();
-        Properties properties = new Properties();
-        properties.setProperty("url","jdbc:mysql://localhost:3306/test_db?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC");
-        properties.setProperty("driverClassName","com.mysql.cj.jdbc.Driver");
-        properties.setProperty("username","root");
-        properties.setProperty("password","123456");
-        DataSource db1 = DruidDataSourceFactory.createDataSource(properties);
-        targetDataSources.put(DBTypeEnum.db1.getValue(), db1);
-        targetDataSources.put(DBTypeEnum.db2.getValue(), db2);
-        targetDataSources.put(DBTypeEnum.db3.getValue(), db3);
+        Map<Object, Object> targetDataSources = buildTargetDataSources();
         dynamicDataSource.setTargetDataSources(targetDataSources);
-        dynamicDataSource.setDefaultTargetDataSource(db1);
+        dynamicDataSource.setDefaultTargetDataSource(targetDataSources.get(getFirstServiceName()));
         return dynamicDataSource;
+    }
+
+    public Map<Object, Object> buildTargetDataSources() throws Exception {
+        String serviceListStr = ev.getProperty("multiple.datasource.service-list");
+        if (null == serviceListStr || serviceListStr.length() < 1) {
+            throw new RuntimeException("使用多数据源必须配置:multiple.datasource.service-list");
+        }
+        String[] serviceNameArr = serviceListStr.split(",");
+        Map<Object, Object> targetDataSources = new HashMap<>();
+
+        for (String serviceName : serviceNameArr) {
+            targetDataSources.put(serviceName, buildDataSource(serviceName));
+        }
+
+        return targetDataSources;
+    }
+
+    private DataSource buildDataSource(String serviceName) throws Exception {
+        Properties properties = new Properties();
+        properties.setProperty("url", ev.getProperty("multiple.datasource." + serviceName + ".url"));
+        properties.setProperty("driverClassName", ev.getProperty("multiple.datasource." + serviceName + ".driver-class-name"));
+        properties.setProperty("username", ev.getProperty("multiple.datasource." + serviceName + ".username"));
+        properties.setProperty("password", ev.getProperty("multiple.datasource." + serviceName + ".password"));
+        DataSource db = DruidDataSourceFactory.createDataSource(properties);
+        return db;
+    }
+
+    private String getFirstServiceName() {
+        String serviceListStr = ev.getProperty("multiple.datasource.service-list");
+        return serviceListStr.split(",")[0];
     }
 
     @Bean("sqlSessionFactory")
     public SqlSessionFactory sqlSessionFactory() throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
-        sqlSessionFactory.setDataSource(multipleDataSource(db2(), db3()));
+        sqlSessionFactory.setDataSource(multipleDataSource());
 
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);
