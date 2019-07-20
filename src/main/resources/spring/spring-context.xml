@@ -8,8 +8,7 @@
     <bean id="myMethodBeforeAdvice" class="com.hawcore.framework.multiplyds.aop.MyMethodBeforeAdvice"/>
     <bean id="myCustomPointcut" class="com.hawcore.framework.multiplyds.aop.MyCustomPointcut"/>
 
-<!--    <aop:config>-->
-<!--        <aop:pointcut id="customPointcut" expression="321"/>-->
-<!--        <aop:advisor advice-ref="myMethodBeforeAdvice" pointcut-ref="customPointcut"/>-->
-<!--    </aop:config>-->
+    <aop:config>
+        <aop:advisor advice-ref="myMethodBeforeAdvice" pointcut-ref="myCustomPointcut"/>
+    </aop:config>
 </beans>

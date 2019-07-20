@@ -36,7 +36,7 @@ public class DataSourceSwitchAspect {
 //    private void db3Aspect() {
 //    }
 
-    @Before("serviceAspect()")
+//    @Before("serviceAspect()")
     public void db1(JoinPoint point) {
         String className = point.getSignature().getDeclaringTypeName();
 //        System.out.println(className);
@@ -55,7 +55,7 @@ public class DataSourceSwitchAspect {
 
     }
 
-    @After("serviceAspect()")
+//    @After("serviceAspect()")
     public void reset() {
 //        logger.info("回退数据源...");
         DbContextHolder.reback();

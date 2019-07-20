@@ -4,6 +4,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.aop.ClassFilter;
 import org.springframework.aop.MethodMatcher;
 import org.springframework.aop.support.StaticMethodMatcherPointcut;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -12,13 +14,12 @@ import java.lang.reflect.Method;
 
 public class MyCustomPointcut extends StaticMethodMatcherPointcut {
 
+    @Autowired
+    private Environment ev;
+
     @Override
     public boolean matches(Method method, Class<?> aClass) {
-//        System.out.println(aClass.getName());
-        if (aClass.getName().startsWith("com.hawcore.framework.multiplyds.service")) {
-            System.out.println(aClass.getName());
-        }
-        return aClass.getName().endsWith("com.hawcore.framework.multiplyds.service");
+        return aClass.getName().startsWith(ev.getProperty("multiple.datasource.base-service-package"));
     }
 
     public MyCustomPointcut() {
