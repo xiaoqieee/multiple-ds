@@ -5,6 +5,7 @@ import com.hawcore.framework.multiplyds.service.TestService;
 import com.hawcore.framework.multiplyds.service.db.IUserService;
 import com.hawcore.framework.multiplyds.service.db1.IUserService1;
 import com.hawcore.framework.multiplyds.service.db2.IUserService2;
+import com.hawcore.framework.multiplyds.service.product.IProductService;
 import com.hawcore.framework.multiplyds.util.PageResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,9 @@ public class TestController {
     @Autowired
     private TestService testService;
 
+    @Autowired
+    private IProductService productService;
+
     @RequestMapping(value = "/getUser", method = RequestMethod.GET)
     public User getUser(Integer id) {
 //        System.out.println(testService.test());
@@ -41,6 +45,15 @@ public class TestController {
     public PageResponseDTO<com.hawcore.framework.multiplyds.entity.db1.User> select(int page, int pagesize) {
 
         return userService1.select(page, pagesize);
+    }
+
+    @RequestMapping(value = "/testProduct", method = RequestMethod.GET)
+    public String testProduct() {
+        System.out.println(productService.selectById(1));
+        System.out.println(iUserService.selectById(1));
+        System.out.println(userService1.selectById(1));
+        System.out.println(userService2.selectById(1));
+        return testService.test();
     }
 
 }
