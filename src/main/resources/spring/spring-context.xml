@@ -5,8 +5,8 @@
 
 
 
-    <bean id="myMethodBeforeAdvice" class="com.hawcore.framework.multiplyds.aop.MyMethodBeforeAdvice"/>
-    <bean id="myCustomPointcut" class="com.hawcore.framework.multiplyds.aop.MyCustomPointcut"/>
+    <bean id="myMethodBeforeAdvice" class="com.hawcore.framework.multiplyds.framework.aop.MultipleDatasourceMethodAdvice"/>
+    <bean id="myCustomPointcut" class="com.hawcore.framework.multiplyds.framework.aop.MultipleDatasourcePointcut"/>
 
     <aop:config>
         <aop:advisor advice-ref="myMethodBeforeAdvice" pointcut-ref="myCustomPointcut"/>

@@ -1,19 +1,13 @@
-package com.hawcore.framework.multiplyds.aop;
+package com.hawcore.framework.multiplyds.framework.aop;
 
-import com.hawcore.framework.multiplyds.config.DBTypeEnum;
-import com.hawcore.framework.multiplyds.config.DbContextHolder;
+import com.hawcore.framework.multiplyds.framework.config.DbContextHolder;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.aspectj.lang.annotation.AdviceName;
-import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Method;
 
 //@Component
-public class MyMethodBeforeAdvice implements MethodInterceptor {
+public class MultipleDatasourceMethodAdvice implements MethodInterceptor {
 
     @Autowired
     private Environment ev;

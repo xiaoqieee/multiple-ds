@@ -1,4 +1,4 @@
-package com.hawcore.framework.multiplyds.config;
+package com.hawcore.framework.multiplyds.framework.util;
 
 import java.util.LinkedList;
 

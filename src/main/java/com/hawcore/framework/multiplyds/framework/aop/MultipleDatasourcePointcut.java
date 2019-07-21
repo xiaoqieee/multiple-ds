@@ -1,18 +1,14 @@
-package com.hawcore.framework.multiplyds.aop;
+package com.hawcore.framework.multiplyds.framework.aop;
 
-import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.aop.ClassFilter;
-import org.springframework.aop.MethodMatcher;
 import org.springframework.aop.support.StaticMethodMatcherPointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
 //@Component
 
-public class MyCustomPointcut extends StaticMethodMatcherPointcut {
+public class MultipleDatasourcePointcut extends StaticMethodMatcherPointcut {
 
     @Autowired
     private Environment ev;
@@ -22,7 +18,7 @@ public class MyCustomPointcut extends StaticMethodMatcherPointcut {
         return aClass.getName().startsWith(ev.getProperty("multiple.datasource.base-service-package"));
     }
 
-    public MyCustomPointcut() {
+    public MultipleDatasourcePointcut() {
     }
 
 }

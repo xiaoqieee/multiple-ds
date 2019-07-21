@@ -1,20 +1,14 @@
-package com.hawcore.framework.multiplyds.config;
+package com.hawcore.framework.multiplyds.framework.config;
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.aop.support.AopUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @Order(value = -100)
-@Aspect
+//@Aspect
 public class DataSourceSwitchAspect {
 
     private Logger logger = LoggerFactory.getLogger(DataSourceSwitchAspect.class);
