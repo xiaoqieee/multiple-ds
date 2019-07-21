@@ -8,7 +8,7 @@
         <version>2.1.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.hawcore.framework.multiplyds</groupId>
+    <groupId>com.hawcore.framework</groupId>
     <artifactId>multiply-ds</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>multiply-ds</name>
